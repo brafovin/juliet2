@@ -534,6 +534,86 @@
       40% { opacity: 1; }
     }
 
+    /* ── TÜR ── */
+    #door {
+      position: absolute;
+      bottom: 108px; right: 30px;
+      width: 55px; height: 115px;
+      background: #8d6e63;
+      border: 4px solid #5d4037;
+      border-radius: 3px 3px 0 0;
+      z-index: 5;
+    }
+    #door .doorknob {
+      position: absolute;
+      left: 8px; top: 55px;
+      width: 9px; height: 9px;
+      background: #ffd54f;
+      border-radius: 50%;
+    }
+    #door-frame-top {
+      position: absolute;
+      bottom: 219px; right: 26px;
+      width: 63px; height: 8px;
+      background: #5d4037;
+      border-radius: 2px;
+      z-index: 6;
+    }
+
+    /* ── EIMER ── */
+    #bucket {
+      position: absolute;
+      bottom: 228px; right: 42px;
+      width: 28px; height: 22px;
+      background: #90caf9;
+      border-radius: 0 0 5px 5px;
+      border: 2px solid #42a5f5;
+      z-index: 7;
+      transition: all 0.2s ease;
+    }
+    #bucket::before {
+      content: '';
+      position: absolute;
+      top: -6px; left: 3px; right: 3px;
+      height: 6px;
+      border-top: 3px solid #42a5f5;
+      border-radius: 50%;
+    }
+    #bucket.tipping {
+      transform: rotate(110deg) translateX(10px);
+      transition: transform 0.3s ease-in;
+    }
+
+    /* ── WASSERSTRAHL ── */
+    #water-splash {
+      position: absolute;
+      bottom: 140px; right: 20px;
+      width: 0; height: 0;
+      z-index: 8;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .water-drop {
+      position: absolute;
+      background: #4fc3f7;
+      border-radius: 50%;
+      opacity: 0;
+      animation: waterfall 0.7s ease-in forwards;
+    }
+    @keyframes waterfall {
+      0%   { opacity: 0.9; transform: translate(0,0) scale(1); }
+      100% { opacity: 0;   transform: translate(var(--dx), 80px) scale(0.4); }
+    }
+
+    /* Vincent nass */
+    #vincent.wet .torso {
+      background: #0d47a1;
+      box-shadow: 0 0 8px #4fc3f7;
+    }
+    #vincent.wet .head {
+      box-shadow: 0 0 6px #4fc3f7;
+    }
+
     /* Herz-Effekt */
     .heart-float {
       position: absolute;
@@ -700,13 +780,24 @@
   <!-- Taschentuch (Prop) -->
   <div id="tissue">🤧</div>
 
+  <!-- TÜR -->
+  <div id="door-frame-top"></div>
+  <div id="door"><div class="doorknob"></div></div>
+
+  <!-- EIMER -->
+  <div id="bucket"></div>
+
+  <!-- WASSERSTRAHL -->
+  <div id="water-splash"></div>
+
 </div>
 
 <!-- UI -->
 <div id="ui">
-  <button id="btn-start" onclick="startSequence()">▶ Szene starten</button>
+  <button id="btn-start" onclick="startSequence()">▶ Szene 1: Stolpern</button>
+  <button id="btn-bucket" onclick="startBucketScene()">🪣 Szene 2: Wassereimer</button>
   <button id="btn-reset" onclick="resetScene()" disabled>↺ Zurücksetzen</button>
-  <div id="status">Klicke auf "Szene starten"</div>
+  <div id="status">Wähle eine Szene!</div>
 </div>
 
 <script>
@@ -1042,9 +1133,183 @@
     // Alle übrig gebliebenen Tränen entfernen
     document.querySelectorAll('.teardrop').forEach(el => el.remove());
 
-    setStatus('Klicke auf "Szene starten"');
+    // Eimer + Wasser zurücksetzen
+    document.getElementById('bucket').classList.remove('tipping');
+    document.querySelectorAll('.water-drop').forEach(el => el.remove());
+
+    // Vincent nass entfernen
+    document.getElementById('vincent').classList.remove('wet');
+    vincent.style.opacity = '1';
+
+    // Juli zurück
+    document.getElementById('juli').style.left = '185px';
+
+    setStatus('Wähle eine Szene!');
     btnStart.disabled = false;
+    document.getElementById('btn-bucket').disabled = false;
     btnReset.disabled = true;
+  }
+
+  /* ══════════════════════════════════════════
+     SZENE 2: WASSEREIMER
+  ══════════════════════════════════════════ */
+  function startBucketScene() {
+    if (sequenceRunning) return;
+    sequenceRunning = true;
+    btnStart.disabled  = true;
+    document.getElementById('btn-bucket').disabled = true;
+
+    const vincent = document.getElementById('vincent');
+    const bucket  = document.getElementById('bucket');
+    const splash  = document.getElementById('water-splash');
+
+    // Vincent sitzt und tippt
+    setStatus('Vincent sitzt am Pult und tippt...');
+    document.getElementById('macbook').classList.add('typing');
+    document.getElementById('macbook-screen').innerHTML =
+      '<span class="dot-anim">.</span><span class="dot-anim">.</span><span class="dot-anim">.</span><br>clackclack';
+    vincent.classList.remove('falling','crying','wet');
+    vincent.className = 'character sitting';
+    showBubble('vincent-bubble', 'Hmm, kurz Pause machen...');
+
+    // Vincent steht auf
+    at(2000, () => {
+      hideBubble('vincent-bubble');
+      vincent.classList.remove('sitting');
+      vincent.style.transition = 'all 0.5s ease';
+      showBubble('vincent-bubble', 'Ich geh kurz raus!');
+      setStatus('Vincent steht auf...');
+    });
+
+    // Vincent läuft zur Tür (rechts)
+    at(3200, () => {
+      hideBubble('vincent-bubble');
+      setStatus('Vincent geht zur Tür...');
+      vincent.style.transition = 'all 1.2s ease';
+      vincent.style.left = '710px';
+    });
+
+    // Vincent verschwindet hinter der Tür
+    at(4600, () => {
+      vincent.style.opacity = '0';
+      setStatus('Vincent ist draußen...');
+
+      // Juli schleicht zum Eimer
+      at(300, () => {
+        showBubble('juli-bubble', 'Jetzt schnell!! 😈');
+        const juli = document.getElementById('juli');
+        juli.style.transition = 'all 0.8s ease';
+        juli.style.left = '680px';
+      });
+    });
+
+    // Juli stellt Eimer auf die Tür
+    at(5600, () => {
+      hideBubble('juli-bubble');
+      showBubble('juli-bubble', '*stellt Eimer auf die Tür* 🪣');
+      // Eimer erscheint sichtbar über der Tür
+      bucket.style.opacity = '1';
+      bucket.style.bottom  = '228px';
+
+      // Aris und Müller bemerken es
+      at(600, () => {
+        showBubble('aris-bubble',    'Was machst du da?! 😳');
+        showBubble('mueller-bubble', 'Juli!! Das ist gefährlich!');
+      });
+    });
+
+    // Juli geht zurück, alle warten gespannt
+    at(7000, () => {
+      hideBubble('juli-bubble');
+      hideBubble('aris-bubble');
+      hideBubble('mueller-bubble');
+      const juli = document.getElementById('juli');
+      juli.style.left = '185px';
+      showBubble('juli-bubble', 'Psst... wartet ab 😏');
+      setStatus('Alle warten gespannt...');
+      showBubble('aris-bubble',    '...');
+      showBubble('mueller-bubble', '...');
+      showBubble('schmidt-bubble', '...oh nein');
+    });
+
+    // Türgeräusch, Vincent kommt zurück
+    at(9000, () => {
+      ['juli-bubble','aris-bubble','mueller-bubble','schmidt-bubble']
+        .forEach(id => hideBubble(id));
+      setStatus('Die Tür geht auf...');
+      spawnStar(700, 180, '🚪');
+
+      vincent.style.transition = 'all 0s';
+      vincent.style.left    = '730px';
+      vincent.style.opacity = '1';
+
+      // Vincent läuft rein
+      setTimeout(() => {
+        vincent.style.transition = 'all 0.6s ease';
+        vincent.style.left = '680px';
+      }, 50);
+    });
+
+    // Eimer kippt!!
+    at(9900, () => {
+      setStatus('Der Eimer kippt!! 💦');
+      bucket.classList.add('tipping');
+      spawnStar(720, 160, '💦');
+      spawnStar(700, 150, '🌊');
+
+      // Wassertropfen spawnen
+      for (let i = 0; i < 18; i++) {
+        setTimeout(() => {
+          const drop = document.createElement('div');
+          drop.className = 'water-drop';
+          drop.style.width  = (6 + Math.random() * 8) + 'px';
+          drop.style.height = drop.style.width;
+          drop.style.left   = (Math.random() * 40 - 20) + 'px';
+          drop.style.top    = '0px';
+          drop.style.setProperty('--dx', (Math.random() * 60 - 30) + 'px');
+          drop.style.animationDelay = (Math.random() * 0.3) + 's';
+          splash.style.right  = '35px';
+          splash.style.bottom = '220px';
+          splash.appendChild(drop);
+          setTimeout(() => drop.remove(), 1200);
+        }, i * 40);
+      }
+    });
+
+    // Vincent ist nass!
+    at(10500, () => {
+      setStatus('Vincent ist klatschnass!! 😂💦');
+      vincent.classList.add('wet');
+      showBubble('vincent-bubble', 'ICH BIN KLATSCHNASS!! 😱💦');
+
+      spawnStar(660, 130, '💧');
+      spawnStar(690, 150, '💦');
+      spawnStar(710, 130, '🌊');
+
+      // Alle lachen
+      at(500,  () => showBubble('juli-bubble',    'HAHAHAHA!! 😂😂😂'));
+      at(700,  () => showBubble('aris-bubble',    'Das... hab ich nicht kommen sehen 😂'));
+      at(900,  () => showBubble('mueller-bubble', 'Oh je... 😬😂'));
+      at(1100, () => showBubble('schmidt-bubble', 'Herr Vincent!! 😱'));
+    });
+
+    at(12500, () => {
+      hideBubble('vincent-bubble');
+      showBubble('vincent-bubble', 'Wer war das?! 😤💧');
+    });
+
+    at(13800, () => {
+      hideBubble('juli-bubble');
+      showBubble('juli-bubble', '*pfeift unschuldig* 🎵');
+    });
+
+    at(15000, () => {
+      ['vincent-bubble','aris-bubble','mueller-bubble','schmidt-bubble','juli-bubble']
+        .forEach(id => hideBubble(id));
+      setStatus('🎬 Ende! Reset zum Wiederholen.');
+      bucket.classList.remove('tipping');
+      btnReset.disabled = false;
+    });
   }
 
   /* Lehrer-Klick für zufällige Sprüche (nur wenn Szene nicht läuft) */
