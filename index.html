@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Klassenzimmer Chaos</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #1a1a2e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+    }
+
+    h1 {
+      color: #e0e0e0;
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px #4fc3f7;
+    }
+
+    #subtitle {
+      color: #90a4ae;
+      font-size: 0.8rem;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
+    #scene {
+      position: relative;
+      width: 820px;
+      height: 480px;
+      background: linear-gradient(180deg, #fff9c4 0%, #fff9c4 55%, #8d6e63 55%, #8d6e63 100%);
+      border: 4px solid #5d4037;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(79,195,247,0.3);
+    }
+
+    /* Tafel */
+    #blackboard {
+      position: absolute;
+      top: 20px; left: 50%;
+      transform: translateX(-50%);
+      width: 380px; height: 100px;
+      background: #2e7d32;
+      border: 8px solid #5d4037;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      color: #c8e6c9;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      text-align: center;
+      padding: 8px;
+      line-height: 1.4;
+    }
+
+    /* Fenster */
+    .window {
+      position: absolute;
+      top: 20px;
+      width: 80px; height: 90px;
+      background: linear-gradient(135deg, #b3e5fc 50%, #81d4fa 50%);
+      border: 5px solid #5d4037;
+      border-radius: 2px;
+    }
+    .window::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 0; right: 0;
+      height: 3px;
+      background: #5d4037;
+    }
+    .window::before {
+      content: '';
+      position: absolute;
+      left: 50%; top: 0; bottom: 0;
+      width: 3px;
+      background: #5d4037;
+    }
+    #win1 { left: 20px; }
+    #win2 { right: 20px; }
+
+    /* Lehrerpult */
+    #desk {
+      position: absolute;
+      bottom: 130px; left: 60px;
+      width: 180px; height: 60px;
+      background: #6d4c41;
+      border-radius: 4px;
+      border-bottom: 12px solid #4e342e;
+    }
+
+    /* MacBook auf dem Pult */
+    #macbook {
+      position: absolute;
+      bottom: 186px; left: 95px;
+      width: 90px; height: 55px;
+    }
+    #macbook .screen {
+      width: 90px; height: 55px;
+      background: #263238;
+      border: 3px solid #90a4ae;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.55rem;
+      color: #80cbc4;
+      text-align: center;
+      line-height: 1.3;
+      padding: 4px;
+      transition: all 0.3s;
+    }
+    #macbook.typing .screen {
+      color: #a5d6a7;
+      background: #1b2631;
+    }
+
+    /* Stuhl */
+    #chair {
+      position: absolute;
+      bottom: 108px; left: 95px;
+      width: 60px; height: 20px;
+      background: #5d4037;
+      border-radius: 2px;
+      border-bottom: 30px solid #4e342e;
+      transition: all 0.4s;
+    }
+
+    /* CHARAKTERE */
+    .character {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.5s ease;
+      cursor: default;
+      user-select: none;
+    }
+
+    .char-name {
+      font-size: 0.65rem;
+      color: #fff;
+      background: rgba(0,0,0,0.55);
+      padding: 1px 5px;
+      border-radius: 8px;
+      margin-bottom: 2px;
+      white-space: nowrap;
+    }
+
+    .char-body {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Kopf */
+    .head {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    .head::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 10%; right: 10%;
+      height: 40%;
+      border-radius: 0 0 50% 50%;
+    }
+
+    /* Haare */
+    .hair {
+      position: absolute;
+      top: -3px; left: -2px; right: -2px;
+      height: 14px;
+      border-radius: 50% 50% 0 0;
+    }
+
+    /* Augen */
+    .eyes {
+      position: absolute;
+      top: 10px;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      padding: 0 5px;
+    }
+    .eye {
+      width: 5px; height: 5px;
+      background: #1a1a1a;
+      border-radius: 50%;
+    }
+
+    /* Mund */
+    .mouth {
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px; height: 4px;
+      border-radius: 0 0 5px 5px;
+      border-bottom: 2px solid #333;
+    }
+
+    /* Körper */
+    .torso {
+      width: 32px; height: 38px;
+      border-radius: 4px;
+      margin-top: 1px;
+    }
+
+    /* Beine */
+    .legs {
+      display: flex;
+      gap: 4px;
+      margin-top: 1px;
+    }
+    .leg {
+      width: 12px; height: 28px;
+      border-radius: 4px;
+    }
+
+    /* ---- VINCENT ---- */
+    #vincent {
+      bottom: 108px;
+      left: 80px;
+      z-index: 10;
+    }
+    #vincent .head { background: #ffcc80; }
+    #vincent .hair { background: #212121; }
+    #vincent .torso { background: #1565c0; }
+    #vincent .leg { background: #37474f; }
+
+    #vincent.sitting {
+      bottom: 122px;
+    }
+    #vincent.sitting .legs {
+      transform: rotate(90deg) translateX(-8px);
+      transform-origin: top center;
+    }
+
+    #vincent.falling {
+      transform: rotate(90deg) translateX(60px);
+      bottom: 80px;
+      left: 130px;
+      transition: all 0.6s cubic-bezier(0.68,-0.55,0.27,1.55);
+    }
+
+    /* ---- ARIS ---- */
+    #aris {
+      bottom: 108px;
+      left: 320px;
+      z-index: 8;
+    }
+    #aris .head { background: #ffb74d; }
+    #aris .hair { background: #6d4c41; }
+    #aris .torso { background: #388e3c; }
+    #aris .leg { background: #1b5e20; }
+
+    /* Bart für Aris */
+    #aris .beard {
+      position: absolute;
+      bottom: 2px;
+      left: 20%;
+      right: 20%;
+      height: 6px;
+      background: #4e342e;
+      border-radius: 2px;
+    }
+
+    /* ---- HERR MÜLLER ---- */
+    #mueller {
+      bottom: 108px;
+      right: 200px;
+      z-index: 8;
+    }
+    #mueller .head { background: #ffcc80; }
+    #mueller .hair { background: #bdbdbd; height: 8px; }
+    #mueller .torso { background: #7b1fa2; }
+    #mueller .leg { background: #4a148c; }
+
+    /* Brille */
+    #mueller .glasses {
+      position: absolute;
+      top: 8px;
+      left: 2px; right: 2px;
+      height: 8px;
+      border: 2px solid #333;
+      border-radius: 2px;
+    }
+
+    /* ---- FRAU SCHMIDT ---- */
+    #schmidt {
+      bottom: 108px;
+      right: 80px;
+      z-index: 8;
+    }
+    #schmidt .head { background: #ffb74d; }
+    #schmidt .hair { background: #ef9a9a; }
+    #schmidt .torso {
+      background: #e91e63;
+      width: 34px;
+    }
+    #schmidt .leg { background: #880e4f; }
+
+    /* Zopf */
+    #schmidt .bun {
+      position: absolute;
+      top: -8px; right: -4px;
+      width: 10px; height: 10px;
+      background: #ef9a9a;
+      border-radius: 50%;
+    }
+
+    /* ---- JULI ---- */
+    #juli {
+      bottom: 108px;
+      left: 185px;
+      z-index: 9;
+    }
+    #juli .head { background: #ffe0b2; }
+    #juli .hair { background: #6d4c41; height: 18px; }
+    #juli .torso { background: #f48fb1; }
+    #juli .leg { background: #7b1fa2; }
+
+    #juli.tripping-pose {
+      left: 175px;
+      bottom: 108px;
+    }
+    #juli.tripping-pose .legs {
+      gap: 12px;
+    }
+
+    /* Sprechblasen */
+    .bubble {
+      position: absolute;
+      background: white;
+      border: 2px solid #333;
+      border-radius: 10px;
+      padding: 5px 8px;
+      font-size: 0.65rem;
+      color: #333;
+      white-space: nowrap;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-bottom: 6px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 20;
+    }
+    .bubble::after {
+      content: '';
+      position: absolute;
+      top: 100%; left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: #333;
+    }
+    .bubble.visible { opacity: 1; }
+
+    /* Schüler-Reihen (Tische im Hintergrund) */
+    .student-desk {
+      position: absolute;
+      width: 70px; height: 30px;
+      background: #a1887f;
+      border-radius: 3px;
+      border-bottom: 8px solid #795548;
+    }
+
+    /* Boden-Linie */
+    #floor-line {
+      position: absolute;
+      bottom: 130px;
+      left: 0; right: 0;
+      height: 3px;
+      background: #5d4037;
+    }
+
+    /* Stuhl-Beschriftung */
+    #teacher-label {
+      position: absolute;
+      bottom: 195px;
+      left: 58px;
+      font-size: 0.6rem;
+      color: #4e342e;
+      background: #ffe082;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    /* UI */
+    #ui {
+      margin-top: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    button {
+      background: #0d47a1;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      letter-spacing: 1px;
+    }
+    button:hover { background: #1565c0; }
+    button:disabled { background: #555; cursor: default; }
+
+    #status {
+      color: #80cbc4;
+      font-size: 0.8rem;
+      min-width: 220px;
+      text-align: center;
+    }
+
+    /* Sterne / Effekt */
+    .star {
+      position: absolute;
+      font-size: 1.2rem;
+      pointer-events: none;
+      animation: floatUp 1.2s ease-out forwards;
+      z-index: 30;
+    }
+    @keyframes floatUp {
+      0%   { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-60px) scale(0.5); }
+    }
+
+    /* Typing dots */
+    .dot-anim {
+      display: inline-block;
+      animation: blink 0.8s infinite;
+    }
+    .dot-anim:nth-child(2) { animation-delay: 0.2s; }
+    .dot-anim:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0; }
+      40% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>Klassenzimmer Chaos</h1>
+<div id="subtitle">Ein Tag in der Schule... der schiefläuft</div>
+
+<div id="scene">
+
+  <!-- Fenster -->
+  <div class="window" id="win1"></div>
+  <div class="window" id="win2"></div>
+
+  <!-- Tafel -->
+  <div id="blackboard">Hausaufgaben:<br>Seite 42 – alle Aufgaben</div>
+
+  <!-- Schülertische (Deko) -->
+  <div class="student-desk" style="bottom:108px; left:460px;"></div>
+  <div class="student-desk" style="bottom:108px; left:560px;"></div>
+  <div class="student-desk" style="bottom:108px; left:660px;"></div>
+  <div class="student-desk" style="bottom:160px; left:460px;"></div>
+  <div class="student-desk" style="bottom:160px; left:560px;"></div>
+  <div class="student-desk" style="bottom:160px; left:660px;"></div>
+
+  <div id="floor-line"></div>
+
+  <!-- Lehrerpult + Stuhl + MacBook -->
+  <div id="desk"></div>
+  <div id="chair"></div>
+  <div id="teacher-label">Lehrerstuhl</div>
+  <div id="macbook">
+    <div class="screen" id="macbook-screen">
+      <span class="dot-anim">.</span><span class="dot-anim">.</span><span class="dot-anim">.</span>
+    </div>
+  </div>
+
+  <!-- VINCENT (sitzt am Pult) -->
+  <div class="character sitting" id="vincent">
+    <div class="char-name">Vincent (Lehrer)</div>
+    <div class="char-body">
+      <div class="head">
+        <div class="hair"></div>
+        <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
+        <div class="mouth"></div>
+      </div>
+      <div class="torso"></div>
+      <div class="legs">
+        <div class="leg"></div>
+        <div class="leg"></div>
+      </div>
+    </div>
+    <div class="bubble" id="vincent-bubble">Ich tippe meinen Roman fertig!</div>
+  </div>
+
+  <!-- ARIS -->
+  <div class="character" id="aris">
+    <div class="char-name">Aris (Lehrer)</div>
+    <div class="char-body">
+      <div class="head">
+        <div class="hair"></div>
+        <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
+        <div class="beard"></div>
+      </div>
+      <div class="torso"></div>
+      <div class="legs">
+        <div class="leg"></div>
+        <div class="leg"></div>
+      </div>
+    </div>
+    <div class="bubble" id="aris-bubble">Hat jemand meine Kreide gesehen?</div>
+  </div>
+
+  <!-- HERR MÜLLER -->
+  <div class="character" id="mueller">
+    <div class="char-name">Hr. Müller</div>
+    <div class="char-body">
+      <div class="head">
+        <div class="hair"></div>
+        <div class="glasses"></div>
+        <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
+        <div class="mouth"></div>
+      </div>
+      <div class="torso"></div>
+      <div class="legs">
+        <div class="leg"></div>
+        <div class="leg"></div>
+      </div>
+    </div>
+    <div class="bubble" id="mueller-bubble">Ruhe bitte!</div>
+  </div>
+
+  <!-- FRAU SCHMIDT -->
+  <div class="character" id="schmidt">
+    <div class="char-name">Fr. Schmidt</div>
+    <div class="char-body">
+      <div class="head">
+        <div class="hair"></div>
+        <div class="bun"></div>
+        <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
+        <div class="mouth"></div>
+      </div>
+      <div class="torso"></div>
+      <div class="legs">
+        <div class="leg"></div>
+        <div class="leg"></div>
+      </div>
+    </div>
+    <div class="bubble" id="schmidt-bubble">Schönen guten Morgen!</div>
+  </div>
+
+  <!-- JULI -->
+  <div class="character" id="juli">
+    <div class="char-name">Juli ⭐</div>
+    <div class="char-body">
+      <div class="head">
+        <div class="hair"></div>
+        <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
+        <div class="mouth"></div>
+      </div>
+      <div class="torso"></div>
+      <div class="legs">
+        <div class="leg"></div>
+        <div class="leg"></div>
+      </div>
+    </div>
+    <div class="bubble" id="juli-bubble">Hehe... 😏</div>
+  </div>
+
+</div>
+
+<!-- UI -->
+<div id="ui">
+  <button id="btn-start" onclick="startSequence()">▶ Szene starten</button>
+  <button id="btn-reset" onclick="resetScene()" disabled>↺ Zurücksetzen</button>
+  <div id="status">Klicke auf "Szene starten"</div>
+</div>
+
+<script>
+  let step = 0;
+  let sequenceRunning = false;
+
+  const statusEl = document.getElementById('status');
+  const btnStart = document.getElementById('btn-start');
+  const btnReset = document.getElementById('btn-reset');
+
+  function showBubble(id, delay = 0) {
+    setTimeout(() => {
+      document.getElementById(id).classList.add('visible');
+    }, delay);
+  }
+
+  function hideBubble(id) {
+    document.getElementById(id).classList.remove('visible');
+  }
+
+  function setStatus(msg) {
+    statusEl.textContent = msg;
+  }
+
+  function spawnStar(x, y, emoji = '⭐') {
+    const el = document.createElement('div');
+    el.className = 'star';
+    el.textContent = emoji;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    document.getElementById('scene').appendChild(el);
+    setTimeout(() => el.remove(), 1300);
+  }
+
+  function startSequence() {
+    if (sequenceRunning) return;
+    sequenceRunning = true;
+    btnStart.disabled = true;
+
+    // Schritt 1: Vincent tippt
+    setStatus('Vincent sitzt am Lehrerpult und tippt...');
+    document.getElementById('macbook').classList.add('typing');
+    document.getElementById('macbook-screen').innerHTML =
+      '<span class="dot-anim">.</span><span class="dot-anim">.</span><span class="dot-anim">.</span><br>clackclack';
+    showBubble('vincent-bubble', 400);
+
+    setTimeout(() => {
+      hideBubble('vincent-bubble');
+      // Auch Aris und Müller reagieren
+      showBubble('aris-bubble', 200);
+      showBubble('mueller-bubble', 600);
+    }, 2200);
+
+    // Schritt 2: Vincent steht auf
+    setTimeout(() => {
+      hideBubble('aris-bubble');
+      hideBubble('mueller-bubble');
+      setStatus('Vincent steht auf...');
+      const vincent = document.getElementById('vincent');
+      vincent.classList.remove('sitting');
+      vincent.style.left = '80px';
+      showBubble('vincent-bubble', 500);
+      document.getElementById('vincent-bubble').textContent = 'So, ich muss kurz zur Tafel!';
+
+      // MacBook bleibt offen
+      document.getElementById('macbook-screen').innerHTML =
+        '📄 Roman_Kapitel7.docx<br><small>Nicht gespeichert</small>';
+
+    }, 3200);
+
+    // Schritt 3: Vincent läuft in Julis Richtung
+    setTimeout(() => {
+      hideBubble('vincent-bubble');
+      setStatus('Vincent läuft zur Tafel...');
+      const vincent = document.getElementById('vincent');
+      vincent.style.transition = 'all 0.8s ease';
+      vincent.style.left = '155px';
+
+      // Juli bereitet sich vor
+      showBubble('juli-bubble', 300);
+      document.getElementById('juli-bubble').textContent = 'Jetzt... 😈';
+    }, 5000);
+
+    // Schritt 4: Juli stellt das Bein
+    setTimeout(() => {
+      hideBubble('juli-bubble');
+      setStatus('Juli stellt Vincent ein Bein!');
+
+      document.getElementById('juli').classList.add('tripping-pose');
+      showBubble('juli-bubble', 100);
+      document.getElementById('juli-bubble').textContent = '*streckt Bein aus* 🦵';
+
+      spawnStar(155, 120, '💥');
+      spawnStar(175, 140, '⚡');
+
+    }, 6200);
+
+    // Schritt 5: Vincent fällt
+    setTimeout(() => {
+      hideBubble('juli-bubble');
+      setStatus('Vincent stolpert und fällt hin! 😂');
+
+      const vincent = document.getElementById('vincent');
+      vincent.classList.add('falling');
+
+      showBubble('vincent-bubble', 300);
+      document.getElementById('vincent-bubble').textContent = 'WAAAAAH! 😱';
+
+      spawnStar(200, 150, '💫');
+      spawnStar(220, 130, '⭐');
+      spawnStar(240, 160, '😂');
+
+      // Alle anderen reagieren
+      setTimeout(() => showBubble('aris-bubble', 0), 600);
+      document.getElementById('aris-bubble').textContent = 'Oh nein!! 😳';
+      setTimeout(() => showBubble('mueller-bubble', 200), 800);
+      document.getElementById('mueller-bubble').textContent = 'Herr Vincent!!';
+      setTimeout(() => showBubble('schmidt-bubble', 400), 1000);
+      document.getElementById('schmidt-bubble').textContent = 'Alles okay?!';
+
+      // Juli lacht
+      setTimeout(() => {
+        showBubble('juli-bubble', 0);
+        document.getElementById('juli-bubble').textContent = 'Hahaha!! 😂😂';
+      }, 800);
+
+    }, 7200);
+
+    // Schritt 6: Ende
+    setTimeout(() => {
+      setStatus('🎬 Szene beendet! Vincent ist auf dem Boden. Reset zum Wiederholen.');
+      btnReset.disabled = false;
+    }, 9500);
+  }
+
+  function resetScene() {
+    sequenceRunning = false;
+
+    // Alle Bubbles verstecken
+    ['vincent-bubble','aris-bubble','mueller-bubble','schmidt-bubble','juli-bubble']
+      .forEach(id => hideBubble(id));
+
+    // Vincent zurücksetzen
+    const vincent = document.getElementById('vincent');
+    vincent.className = 'character sitting';
+    vincent.style.left = '80px';
+    vincent.style.transition = 'all 0.5s ease';
+
+    // Juli zurücksetzen
+    document.getElementById('juli').classList.remove('tripping-pose');
+
+    // MacBook zurücksetzen
+    document.getElementById('macbook').classList.remove('typing');
+    document.getElementById('macbook-screen').innerHTML =
+      '<span class="dot-anim">.</span><span class="dot-anim">.</span><span class="dot-anim">.</span>';
+
+    // Vincent-Bubble Text zurücksetzen
+    document.getElementById('vincent-bubble').textContent = 'Ich tippe meinen Roman fertig!';
+
+    setStatus('Klicke auf "Szene starten"');
+    btnStart.disabled = false;
+    btnReset.disabled = true;
+  }
+
+  // Lehrer-Klick für zufällige Sprüche
+  const teacherQuotes = {
+    aris: ['Hausaufgaben abgegeben?', 'Seite 42 bitte!', 'Ich habe alles im Blick!', 'Hat jemand meine Kreide?'],
+    mueller: ['Ruhe jetzt!', 'Aufpassen!', 'Das kommt in die Arbeit!', 'Stift raus!'],
+    schmidt: ['Sehr schön!', 'Gut gemacht!', 'Aufgepasst bitte.', 'Guten Morgen!'],
+  };
+
+  ['aris','mueller','schmidt'].forEach(id => {
+    document.getElementById(id).addEventListener('click', () => {
+      if (sequenceRunning) return;
+      const quotes = teacherQuotes[id];
+      const q = quotes[Math.floor(Math.random() * quotes.length)];
+      document.getElementById(id + '-bubble').textContent = q;
+      showBubble(id + '-bubble');
+      setTimeout(() => hideBubble(id + '-bubble'), 2000);
+    });
+  });
+</script>
+
+</body>
+</html>
