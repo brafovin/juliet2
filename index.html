@@ -169,13 +169,6 @@
       position: relative;
       overflow: hidden;
     }
-    .head::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 10%; right: 10%;
-      height: 40%;
-      border-radius: 0 0 50% 50%;
-    }
 
     /* Haare */
     .hair {
@@ -209,6 +202,14 @@
       width: 10px; height: 4px;
       border-radius: 0 0 5px 5px;
       border-bottom: 2px solid #333;
+    }
+
+    /* trauriger Mund */
+    .mouth.sad {
+      border-bottom: none;
+      border-top: 2px solid #333;
+      border-radius: 5px 5px 0 0;
+      bottom: 4px;
     }
 
     /* Körper */
@@ -255,6 +256,19 @@
       transition: all 0.6s cubic-bezier(0.68,-0.55,0.27,1.55);
     }
 
+    #vincent.crying {
+      left: 18px !important;
+      bottom: 108px !important;
+      transform: none !important;
+      transition: all 0.9s ease !important;
+      animation: sob 0.5s infinite alternate;
+    }
+
+    @keyframes sob {
+      0% { transform: translateX(0) rotate(-3deg); }
+      100% { transform: translateX(2px) rotate(3deg); }
+    }
+
     /* ---- ARIS ---- */
     #aris {
       bottom: 108px;
@@ -266,7 +280,6 @@
     #aris .torso { background: #388e3c; }
     #aris .leg { background: #1b5e20; }
 
-    /* Bart für Aris */
     #aris .beard {
       position: absolute;
       bottom: 2px;
@@ -288,7 +301,6 @@
     #mueller .torso { background: #7b1fa2; }
     #mueller .leg { background: #4a148c; }
 
-    /* Brille */
     #mueller .glasses {
       position: absolute;
       top: 8px;
@@ -306,13 +318,9 @@
     }
     #schmidt .head { background: #ffb74d; }
     #schmidt .hair { background: #ef9a9a; }
-    #schmidt .torso {
-      background: #e91e63;
-      width: 34px;
-    }
+    #schmidt .torso { background: #e91e63; width: 34px; }
     #schmidt .leg { background: #880e4f; }
 
-    /* Zopf */
     #schmidt .bun {
       position: absolute;
       top: -8px; right: -4px;
@@ -336,8 +344,37 @@
       left: 175px;
       bottom: 108px;
     }
-    #juli.tripping-pose .legs {
-      gap: 12px;
+    #juli.tripping-pose .legs { gap: 12px; }
+
+    /* ---- JULIET ---- */
+    #juliet {
+      bottom: 108px;
+      right: -100px;
+      z-index: 11;
+      transition: all 1s ease;
+    }
+    #juliet .head { background: #ffe0b2; }
+    #juliet .hair { background: #5d4037; height: 20px; }
+    #juliet .torso { background: #26a69a; }
+    #juliet .leg { background: #00695c; }
+
+    /* Haar-Schleife für Juliet */
+    #juliet .bow {
+      position: absolute;
+      top: -10px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+    }
+
+    /* Taschentuch in der Hand */
+    #tissue {
+      position: absolute;
+      bottom: 180px;
+      right: -80px;
+      font-size: 1.4rem;
+      transition: all 1s ease;
+      z-index: 12;
+      pointer-events: none;
     }
 
     /* Sprechblasen */
@@ -369,7 +406,50 @@
     }
     .bubble.visible { opacity: 1; }
 
-    /* Schüler-Reihen (Tische im Hintergrund) */
+    /* Weinblasen (blau) */
+    .bubble.cry {
+      background: #e3f2fd;
+      border-color: #1e88e5;
+      color: #1a237e;
+      font-weight: bold;
+    }
+    .bubble.cry::after { border-top-color: #1e88e5; }
+
+    /* Träne */
+    .teardrop {
+      position: absolute;
+      width: 6px; height: 9px;
+      background: #4fc3f7;
+      border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
+      opacity: 0.85;
+      pointer-events: none;
+      animation: tearfall 0.9s ease-in forwards;
+      z-index: 15;
+    }
+    @keyframes tearfall {
+      0%   { opacity: 0.85; transform: translateY(0); }
+      100% { opacity: 0;   transform: translateY(55px); }
+    }
+
+    /* Wasserpfütze */
+    #puddle {
+      position: absolute;
+      bottom: 108px;
+      left: 8px;
+      width: 0px; height: 7px;
+      background: rgba(79,195,247,0.45);
+      border-radius: 50%;
+      transition: width 0.6s ease, left 0.6s ease;
+      z-index: 6;
+    }
+
+    /* Wischer-Pose (Charaktere bücken sich) */
+    .wiping {
+      transform: scaleY(0.8) translateY(10px) !important;
+      transition: transform 0.4s ease !important;
+    }
+
+    /* Schüler-Reihen (Deko) */
     .student-desk {
       position: absolute;
       width: 70px; height: 30px;
@@ -425,11 +505,11 @@
     #status {
       color: #80cbc4;
       font-size: 0.8rem;
-      min-width: 220px;
+      min-width: 240px;
       text-align: center;
     }
 
-    /* Sterne / Effekt */
+    /* Schwebende Effekte */
     .star {
       position: absolute;
       font-size: 1.2rem;
@@ -452,6 +532,20 @@
     @keyframes blink {
       0%, 80%, 100% { opacity: 0; }
       40% { opacity: 1; }
+    }
+
+    /* Herz-Effekt */
+    .heart-float {
+      position: absolute;
+      font-size: 1.4rem;
+      pointer-events: none;
+      animation: heartUp 1.5s ease-out forwards;
+      z-index: 30;
+    }
+    @keyframes heartUp {
+      0%   { opacity: 1; transform: translateY(0) scale(0.6); }
+      50%  { opacity: 1; transform: translateY(-30px) scale(1.1); }
+      100% { opacity: 0; transform: translateY(-70px) scale(0.8); }
     }
   </style>
 </head>
@@ -479,6 +573,9 @@
 
   <div id="floor-line"></div>
 
+  <!-- Wasserpfütze -->
+  <div id="puddle"></div>
+
   <!-- Lehrerpult + Stuhl + MacBook -->
   <div id="desk"></div>
   <div id="chair"></div>
@@ -496,7 +593,7 @@
       <div class="head">
         <div class="hair"></div>
         <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
-        <div class="mouth"></div>
+        <div class="mouth" id="vincent-mouth"></div>
       </div>
       <div class="torso"></div>
       <div class="legs">
@@ -581,6 +678,28 @@
     <div class="bubble" id="juli-bubble">Hehe... 😏</div>
   </div>
 
+  <!-- JULIET (betritt die Szene von rechts) -->
+  <div class="character" id="juliet">
+    <div class="char-name">Juliet 🤍</div>
+    <div class="char-body">
+      <div class="head">
+        <div class="hair"></div>
+        <div class="bow">🎀</div>
+        <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
+        <div class="mouth"></div>
+      </div>
+      <div class="torso"></div>
+      <div class="legs">
+        <div class="leg"></div>
+        <div class="leg"></div>
+      </div>
+    </div>
+    <div class="bubble" id="juliet-bubble">Alles gut?</div>
+  </div>
+
+  <!-- Taschentuch (Prop) -->
+  <div id="tissue">🤧</div>
+
 </div>
 
 <!-- UI -->
@@ -591,35 +710,60 @@
 </div>
 
 <script>
-  let step = 0;
   let sequenceRunning = false;
+  let tearInterval = null;
 
-  const statusEl = document.getElementById('status');
-  const btnStart = document.getElementById('btn-start');
-  const btnReset = document.getElementById('btn-reset');
+  const statusEl  = document.getElementById('status');
+  const btnStart  = document.getElementById('btn-start');
+  const btnReset  = document.getElementById('btn-reset');
+  const puddle    = document.getElementById('puddle');
+  const tissue    = document.getElementById('tissue');
 
-  function showBubble(id, delay = 0) {
-    setTimeout(() => {
-      document.getElementById(id).classList.add('visible');
-    }, delay);
+  function showBubble(id, text, isCry = false) {
+    const el = document.getElementById(id);
+    if (text !== undefined) el.textContent = text;
+    if (isCry) el.classList.add('cry'); else el.classList.remove('cry');
+    el.classList.add('visible');
   }
 
   function hideBubble(id) {
     document.getElementById(id).classList.remove('visible');
   }
 
-  function setStatus(msg) {
-    statusEl.textContent = msg;
-  }
+  function setStatus(msg) { statusEl.textContent = msg; }
 
-  function spawnStar(x, y, emoji = '⭐') {
+  function spawnStar(x, y, emoji) {
     const el = document.createElement('div');
     el.className = 'star';
     el.textContent = emoji;
     el.style.left = x + 'px';
-    el.style.top = y + 'px';
+    el.style.top  = y + 'px';
     document.getElementById('scene').appendChild(el);
     setTimeout(() => el.remove(), 1300);
+  }
+
+  function spawnHeart(x, y) {
+    const el = document.createElement('div');
+    el.className = 'heart-float';
+    el.textContent = '🤍';
+    el.style.left = x + 'px';
+    el.style.top  = y + 'px';
+    document.getElementById('scene').appendChild(el);
+    setTimeout(() => el.remove(), 1600);
+  }
+
+  function spawnTear(x, y) {
+    const el = document.createElement('div');
+    el.className = 'teardrop';
+    el.style.left = x + 'px';
+    el.style.top  = y + 'px';
+    document.getElementById('scene').appendChild(el);
+    setTimeout(() => el.remove(), 950);
+  }
+
+  function growPuddle(targetW, leftPos) {
+    puddle.style.width = targetW + 'px';
+    if (leftPos !== undefined) puddle.style.left = leftPos + 'px';
   }
 
   function startSequence() {
@@ -627,145 +771,293 @@
     sequenceRunning = true;
     btnStart.disabled = true;
 
-    // Schritt 1: Vincent tippt
+    /* ── TEIL 1: Vincent tippt ── */
     setStatus('Vincent sitzt am Lehrerpult und tippt...');
     document.getElementById('macbook').classList.add('typing');
     document.getElementById('macbook-screen').innerHTML =
       '<span class="dot-anim">.</span><span class="dot-anim">.</span><span class="dot-anim">.</span><br>clackclack';
-    showBubble('vincent-bubble', 400);
+    showBubble('vincent-bubble', 'Ich tippe meinen Roman fertig!');
 
-    setTimeout(() => {
+    at(2200, () => {
       hideBubble('vincent-bubble');
-      // Auch Aris und Müller reagieren
-      showBubble('aris-bubble', 200);
-      showBubble('mueller-bubble', 600);
-    }, 2200);
+      showBubble('aris-bubble',   'Hat jemand meine Kreide gesehen?');
+      showBubble('mueller-bubble','Psst – leise da!');
+    });
 
-    // Schritt 2: Vincent steht auf
-    setTimeout(() => {
+    /* ── TEIL 2: Vincent steht auf ── */
+    at(3200, () => {
       hideBubble('aris-bubble');
       hideBubble('mueller-bubble');
       setStatus('Vincent steht auf...');
-      const vincent = document.getElementById('vincent');
-      vincent.classList.remove('sitting');
-      vincent.style.left = '80px';
-      showBubble('vincent-bubble', 500);
-      document.getElementById('vincent-bubble').textContent = 'So, ich muss kurz zur Tafel!';
-
-      // MacBook bleibt offen
+      const v = document.getElementById('vincent');
+      v.classList.remove('sitting');
+      v.style.left = '80px';
+      showBubble('vincent-bubble', 'So, ich muss kurz zur Tafel!');
       document.getElementById('macbook-screen').innerHTML =
         '📄 Roman_Kapitel7.docx<br><small>Nicht gespeichert</small>';
+    });
 
-    }, 3200);
-
-    // Schritt 3: Vincent läuft in Julis Richtung
-    setTimeout(() => {
+    /* ── TEIL 3: Vincent läuft, Juli lauert ── */
+    at(5000, () => {
       hideBubble('vincent-bubble');
       setStatus('Vincent läuft zur Tafel...');
-      const vincent = document.getElementById('vincent');
-      vincent.style.transition = 'all 0.8s ease';
-      vincent.style.left = '155px';
+      const v = document.getElementById('vincent');
+      v.style.transition = 'all 0.8s ease';
+      v.style.left = '155px';
+      showBubble('juli-bubble', 'Jetzt... 😈');
+    });
 
-      // Juli bereitet sich vor
-      showBubble('juli-bubble', 300);
-      document.getElementById('juli-bubble').textContent = 'Jetzt... 😈';
-    }, 5000);
-
-    // Schritt 4: Juli stellt das Bein
-    setTimeout(() => {
+    /* ── TEIL 4: Juli stellt das Bein ── */
+    at(6200, () => {
       hideBubble('juli-bubble');
       setStatus('Juli stellt Vincent ein Bein!');
-
       document.getElementById('juli').classList.add('tripping-pose');
-      showBubble('juli-bubble', 100);
-      document.getElementById('juli-bubble').textContent = '*streckt Bein aus* 🦵';
-
+      showBubble('juli-bubble', '*streckt Bein aus* 🦵');
       spawnStar(155, 120, '💥');
       spawnStar(175, 140, '⚡');
+    });
 
-    }, 6200);
-
-    // Schritt 5: Vincent fällt
-    setTimeout(() => {
+    /* ── TEIL 5: Vincent fällt ── */
+    at(7200, () => {
       hideBubble('juli-bubble');
       setStatus('Vincent stolpert und fällt hin! 😂');
-
-      const vincent = document.getElementById('vincent');
-      vincent.classList.add('falling');
-
-      showBubble('vincent-bubble', 300);
-      document.getElementById('vincent-bubble').textContent = 'WAAAAAH! 😱';
-
+      const v = document.getElementById('vincent');
+      v.classList.add('falling');
+      showBubble('vincent-bubble', 'WAAAAAH! 😱');
       spawnStar(200, 150, '💫');
       spawnStar(220, 130, '⭐');
       spawnStar(240, 160, '😂');
 
-      // Alle anderen reagieren
-      setTimeout(() => showBubble('aris-bubble', 0), 600);
-      document.getElementById('aris-bubble').textContent = 'Oh nein!! 😳';
-      setTimeout(() => showBubble('mueller-bubble', 200), 800);
-      document.getElementById('mueller-bubble').textContent = 'Herr Vincent!!';
-      setTimeout(() => showBubble('schmidt-bubble', 400), 1000);
-      document.getElementById('schmidt-bubble').textContent = 'Alles okay?!';
+      at(600,  () => showBubble('aris-bubble',    'Oh nein!! 😳'));
+      at(800,  () => showBubble('mueller-bubble', 'Herr Vincent!!'));
+      at(1000, () => showBubble('schmidt-bubble', 'Alles okay?!'));
+      at(800,  () => showBubble('juli-bubble',    'Hahaha!! 😂😂'));
+    });
 
-      // Juli lacht
+    /* ── TEIL 6: Alle Reaktionen verblassen ── */
+    at(9200, () => {
+      ['aris-bubble','mueller-bubble','schmidt-bubble','juli-bubble','vincent-bubble']
+        .forEach(id => hideBubble(id));
+    });
+
+    /* ── TEIL 7: Vincent steht auf und geht in die Ecke ── */
+    at(9800, () => {
+      setStatus('Vincent rappelt sich auf und schleicht in die Ecke...');
+      const v = document.getElementById('vincent');
+      v.classList.remove('falling');
+      v.style.transition = 'all 1s ease';
+      // kurze Verzögerung damit die CSS-Transition greift
       setTimeout(() => {
-        showBubble('juli-bubble', 0);
-        document.getElementById('juli-bubble').textContent = 'Hahaha!! 😂😂';
+        v.style.left   = '18px';
+        v.style.bottom = '108px';
+        v.style.transform = 'none';
+      }, 80);
+    });
+
+    /* ── TEIL 8: Vincent weint ── */
+    at(11200, () => {
+      setStatus('Vincent weint in der Ecke... 😢');
+      const v = document.getElementById('vincent');
+      v.classList.add('crying');
+
+      // Trauriger Mund
+      const mouth = document.getElementById('vincent-mouth');
+      mouth.classList.add('sad');
+
+      // Weinblasen – mehrere Sätze
+      showBubble('vincent-bubble', 'Ich fühle mich so gemobbt! 😭😭😭', true);
+
+      // Tränen starten
+      tearInterval = setInterval(() => {
+        spawnTear(30 + Math.random() * 14, 165 + Math.random() * 10);
+        spawnTear(38 + Math.random() * 10, 168 + Math.random() * 10);
+      }, 180);
+
+      // Pfütze wächst
+      at(400,  () => growPuddle(30,  5));
+      at(900,  () => growPuddle(70,  3));
+      at(1500, () => growPuddle(120, 0));
+      at(2200, () => growPuddle(180,-5));
+      at(3000, () => growPuddle(250,-10));
+    });
+
+    at(12200, () => {
+      hideBubble('vincent-bubble');
+      showBubble('vincent-bubble', 'Warum macht ihr das mit mir?! 😭', true);
+    });
+    at(13300, () => {
+      hideBubble('vincent-bubble');
+      showBubble('vincent-bubble', '*schluchz* *schnief* 💧💧💧', true);
+    });
+
+    /* ── TEIL 9: Alle anderen in Panik wegen der Tränenflut ── */
+    at(13800, () => {
+      setStatus('Die Tränen überfluten den Boden – alle wischen!');
+      hideBubble('vincent-bubble');
+
+      showBubble('aris-bubble',    '😱 Das Wasser steigt!!');
+      showBubble('mueller-bubble', '🧹 Ich wische! Ich wische!');
+      showBubble('schmidt-bubble', '🪣 Wir brauchen MEHR Eimer!');
+      showBubble('juli-bubble',    '...oh nein 😬');
+
+      // Alle bewegen sich in Richtung Pfütze
+      const aris    = document.getElementById('aris');
+      const mueller = document.getElementById('mueller');
+      const schmidt = document.getElementById('schmidt');
+
+      aris.style.transition    = 'all 0.8s ease';
+      mueller.style.transition = 'all 0.8s ease';
+      schmidt.style.transition = 'all 0.8s ease';
+
+      aris.style.left    = '200px';
+      mueller.style.left = '350px';
+      schmidt.style.left = '480px';
+
+      // Wisch-Pose
+      setTimeout(() => {
+        aris.classList.add('wiping');
+        mueller.classList.add('wiping');
+        schmidt.classList.add('wiping');
       }, 800);
 
-    }, 7200);
+      // Mehr Stern-Wisch-Effekte
+      at(1000, () => spawnStar(200, 200, '🧹'));
+      at(1300, () => spawnStar(350, 200, '🪣'));
+      at(1600, () => spawnStar(480, 200, '🧽'));
+      at(2000, () => spawnStar(220, 210, '💦'));
+      at(2300, () => spawnStar(370, 210, '💦'));
+    });
 
-    // Schritt 6: Ende
-    setTimeout(() => {
-      setStatus('🎬 Szene beendet! Vincent ist auf dem Boden. Reset zum Wiederholen.');
+    at(15500, () => {
+      ['aris-bubble','mueller-bubble','schmidt-bubble','juli-bubble']
+        .forEach(id => hideBubble(id));
+      // Wischen beendet
+      ['aris','mueller','schmidt'].forEach(id => {
+        document.getElementById(id).classList.remove('wiping');
+      });
+    });
+
+    /* ── TEIL 10: Juliet betritt die Szene mit Taschentuch ── */
+    at(16000, () => {
+      setStatus('Juliet kommt mit einem Taschentuch für Vincent...');
+
+      const juliet = document.getElementById('juliet');
+      juliet.style.right = '500px';  // läuft rein von rechts
+      tissue.style.right = '495px';
+      tissue.style.bottom = '185px';
+    });
+
+    at(17200, () => {
+      const juliet = document.getElementById('juliet');
+      juliet.style.right = '760px';  // nah bei Vincent (der ist ganz links)
+      tissue.style.right = '755px';
+      showBubble('juliet-bubble', 'Hey Vincent... hier ist ein Taschentuch 🤍');
+    });
+
+    /* ── TEIL 11: Vincent nimmt das Taschentuch ── */
+    at(18800, () => {
+      hideBubble('juliet-bubble');
+      clearInterval(tearInterval);
+      tearInterval = null;
+
+      hideBubble('vincent-bubble');
+      showBubble('vincent-bubble', 'D-danke... du bist so nett 🥺', true);
+
+      spawnHeart(60,  180);
+      spawnHeart(80,  170);
+      spawnHeart(50,  190);
+
+      // Taschentuch wandert zu Vincent
+      tissue.style.right  = '780px';
+      tissue.style.bottom = '210px';
+      tissue.style.fontSize = '2rem';
+
+      // Pfütze schrumpft langsam
+      at(800, () => growPuddle(150, 5));
+      at(1600, () => growPuddle(60, 10));
+      at(2400, () => growPuddle(0,  15));
+    });
+
+    at(20200, () => {
+      hideBubble('vincent-bubble');
+      showBubble('juliet-bubble', 'Alles wird gut! 😊');
+      showBubble('vincent-bubble', '*schnief* ...danke Juliet 💙', true);
+      spawnHeart(70, 160);
+      spawnHeart(90, 175);
+    });
+
+    /* ── ENDE ── */
+    at(22000, () => {
+      setStatus('🎬 Ende! Vincent fühlt sich besser. Reset zum Wiederholen.');
       btnReset.disabled = false;
-    }, 9500);
+    });
   }
 
+  /* Hilfsfunktion: relativer Timeout ab jetzt (erster Aufruf) oder verschachtelt */
+  let _base = 0;
+  function at(ms, fn) {
+    setTimeout(fn, ms);
+  }
+
+  /* ── RESET ── */
   function resetScene() {
+    clearInterval(tearInterval);
+    tearInterval = null;
     sequenceRunning = false;
 
-    // Alle Bubbles verstecken
-    ['vincent-bubble','aris-bubble','mueller-bubble','schmidt-bubble','juli-bubble']
+    ['vincent-bubble','aris-bubble','mueller-bubble',
+     'schmidt-bubble','juli-bubble','juliet-bubble']
       .forEach(id => hideBubble(id));
 
-    // Vincent zurücksetzen
     const vincent = document.getElementById('vincent');
     vincent.className = 'character sitting';
-    vincent.style.left = '80px';
-    vincent.style.transition = 'all 0.5s ease';
+    vincent.style.cssText = 'left:80px;';
+    document.getElementById('vincent-mouth').classList.remove('sad');
+    document.getElementById('vincent-bubble').textContent = 'Ich tippe meinen Roman fertig!';
+    document.getElementById('vincent-bubble').classList.remove('cry');
 
-    // Juli zurücksetzen
     document.getElementById('juli').classList.remove('tripping-pose');
 
-    // MacBook zurücksetzen
+    const aris    = document.getElementById('aris');
+    const mueller = document.getElementById('mueller');
+    const schmidt = document.getElementById('schmidt');
+    aris.classList.remove('wiping');
+    mueller.classList.remove('wiping');
+    schmidt.classList.remove('wiping');
+    aris.style.cssText    = '';
+    mueller.style.cssText = '';
+    schmidt.style.cssText = '';
+
+    const juliet = document.getElementById('juliet');
+    juliet.style.cssText = '';
+
+    tissue.style.cssText = '';
+
+    puddle.style.width = '0px';
+
     document.getElementById('macbook').classList.remove('typing');
     document.getElementById('macbook-screen').innerHTML =
       '<span class="dot-anim">.</span><span class="dot-anim">.</span><span class="dot-anim">.</span>';
 
-    // Vincent-Bubble Text zurücksetzen
-    document.getElementById('vincent-bubble').textContent = 'Ich tippe meinen Roman fertig!';
+    // Alle übrig gebliebenen Tränen entfernen
+    document.querySelectorAll('.teardrop').forEach(el => el.remove());
 
     setStatus('Klicke auf "Szene starten"');
     btnStart.disabled = false;
     btnReset.disabled = true;
   }
 
-  // Lehrer-Klick für zufällige Sprüche
+  /* Lehrer-Klick für zufällige Sprüche (nur wenn Szene nicht läuft) */
   const teacherQuotes = {
-    aris: ['Hausaufgaben abgegeben?', 'Seite 42 bitte!', 'Ich habe alles im Blick!', 'Hat jemand meine Kreide?'],
-    mueller: ['Ruhe jetzt!', 'Aufpassen!', 'Das kommt in die Arbeit!', 'Stift raus!'],
+    aris:    ['Hausaufgaben abgegeben?', 'Seite 42 bitte!', 'Hat jemand meine Kreide?', 'Aufgepasst!'],
+    mueller: ['Ruhe jetzt!', 'Das kommt in die Arbeit!', 'Stift raus!', 'Aufpassen!'],
     schmidt: ['Sehr schön!', 'Gut gemacht!', 'Aufgepasst bitte.', 'Guten Morgen!'],
   };
-
   ['aris','mueller','schmidt'].forEach(id => {
     document.getElementById(id).addEventListener('click', () => {
       if (sequenceRunning) return;
-      const quotes = teacherQuotes[id];
-      const q = quotes[Math.floor(Math.random() * quotes.length)];
-      document.getElementById(id + '-bubble').textContent = q;
-      showBubble(id + '-bubble');
+      const q = teacherQuotes[id][Math.floor(Math.random() * teacherQuotes[id].length)];
+      showBubble(id + '-bubble', q);
       setTimeout(() => hideBubble(id + '-bubble'), 2000);
     });
   });
