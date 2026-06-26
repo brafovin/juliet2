@@ -796,6 +796,7 @@
 <div id="ui">
   <button id="btn-start" onclick="startSequence()">▶ Szene 1: Stolpern</button>
   <button id="btn-bucket" onclick="startBucketScene()">🪣 Szene 2: Wassereimer</button>
+  <button id="btn-tiktok" onclick="startTikTokScene()">📱 Szene 3: Für 10€ viral</button>
   <button id="btn-reset" onclick="resetScene()" disabled>↺ Zurücksetzen</button>
   <div id="status">Wähle eine Szene!</div>
 </div>
@@ -1144,10 +1145,184 @@
     // Juli zurück
     document.getElementById('juli').style.left = '185px';
 
+    // TikTok-Box entfernen falls vorhanden
+    const box = document.getElementById('tiktok-box');
+    if (box) box.remove();
+
     setStatus('Wähle eine Szene!');
     btnStart.disabled = false;
-    document.getElementById('btn-bucket').disabled = false;
+    document.getElementById('btn-bucket').disabled  = false;
+    document.getElementById('btn-tiktok').disabled  = false;
     btnReset.disabled = true;
+  }
+
+  /* ══════════════════════════════════════════
+     SZENE 3: FÜR 10€ – VIRAL AUF TIKTOK
+  ══════════════════════════════════════════ */
+  function startTikTokScene() {
+    if (sequenceRunning) return;
+    sequenceRunning = true;
+    ['btn-start','btn-bucket','btn-tiktok'].forEach(id => document.getElementById(id).disabled = true);
+
+    const vincent = document.getElementById('vincent');
+    const aris    = document.getElementById('aris');
+
+    // Reset-Positionen
+    vincent.className = 'character sitting';
+    vincent.style.cssText = 'left:80px; opacity:1;';
+    aris.style.cssText = '';
+
+    setStatus('Juli hat einen Plan...');
+    document.getElementById('macbook').classList.add('typing');
+    document.getElementById('macbook-screen').innerHTML =
+      '<span class="dot-anim">.</span><span class="dot-anim">.</span><span class="dot-anim">.</span><br>clackclack';
+
+    // Juli macht das Angebot
+    at(800, () => {
+      const juli = document.getElementById('juli');
+      juli.style.transition = 'all 0.7s ease';
+      juli.style.left = '100px';
+      showBubble('juli-bubble', 'Vincent... ich geb dir 10€ 💶');
+    });
+
+    at(2200, () => {
+      hideBubble('juli-bubble');
+      vincent.classList.remove('sitting');
+      vincent.style.transition = 'all 0.4s ease';
+      showBubble('vincent-bubble', '10€?! Wofür?? 🤨');
+    });
+
+    at(3400, () => {
+      hideBubble('vincent-bubble');
+      showBubble('juli-bubble', '...du musst Aris küssen 😏');
+      setStatus('Juli macht ein unmoralisches Angebot...');
+    });
+
+    at(4800, () => {
+      hideBubble('juli-bubble');
+      showBubble('vincent-bubble', '...');
+    });
+
+    at(5800, () => {
+      hideBubble('vincent-bubble');
+      showBubble('vincent-bubble', '...deal. 🤝');
+      setStatus('Vincent denkt kurz nach... und sagt JA');
+      spawnStar(120, 200, '💶');
+      spawnStar(140, 190, '💶');
+    });
+
+    // Müller und Schmidt reagieren
+    at(6800, () => {
+      hideBubble('vincent-bubble');
+      showBubble('mueller-bubble', 'Was passiert hier gerade?? 😰');
+      showBubble('schmidt-bubble', 'Ich film das!! 📱');
+      setStatus('Fr. Schmidt zückt ihr Handy...');
+    });
+
+    // Vincent läuft auf Aris zu
+    at(7800, () => {
+      hideBubble('mueller-bubble');
+      hideBubble('schmidt-bubble');
+      setStatus('Vincent läuft zu Aris...');
+      vincent.style.transition = 'all 1s ease';
+      vincent.style.left = '290px';
+    });
+
+    // Aris merkt es
+    at(8600, () => {
+      showBubble('aris-bubble', 'Warum kommst du so nah?? 😶');
+    });
+
+    // DER KUSS
+    at(9400, () => {
+      hideBubble('aris-bubble');
+      setStatus('Vincent küsst Aris!! 😘');
+
+      // Kuss-Effekte
+      spawnStar(330, 140, '😘');
+      spawnStar(310, 155, '💋');
+      spawnStar(350, 145, '💕');
+      spawnStar(325, 130, '❤️');
+
+      showBubble('aris-bubble', '?!?!?!?! 😳😳😳');
+      showBubble('vincent-bubble', '*mwah* 💋');
+
+      // Vincent springt zurück
+      setTimeout(() => {
+        vincent.style.left = '200px';
+      }, 600);
+    });
+
+    // Alle explodieren
+    at(10800, () => {
+      hideBubble('aris-bubble');
+      hideBubble('vincent-bubble');
+      showBubble('juli-bubble',    'HAHAHAHA 💀💀💀');
+      showBubble('mueller-bubble', 'Ich hab das nicht gesehen!!');
+      showBubble('schmidt-bubble', 'ICH HAB ALLES!! 📱✅');
+      showBubble('aris-bubble',    'WAS ZUR HÖLLE?!?! 😤');
+      showBubble('vincent-bubble', 'War die 10€ wert 🤷');
+
+      spawnStar(400, 120, '😂');
+      spawnStar(200, 130, '😂');
+      spawnStar(600, 130, '😂');
+    });
+
+    // TikTok viral
+    at(12500, () => {
+      ['juli-bubble','mueller-bubble','schmidt-bubble','aris-bubble','vincent-bubble']
+        .forEach(id => hideBubble(id));
+
+      setStatus('Fr. Schmidt postet das Video...');
+      showBubble('schmidt-bubble', 'Hochgeladen!! #Vincent #Aris 🎵');
+      spawnStar(500, 100, '📱');
+
+      // TikTok-Counter erscheint
+      const counter = document.createElement('div');
+      counter.id = 'tiktok-box';
+      counter.style.cssText = `
+        position:absolute; top:20px; right:110px;
+        background:#010101; color:#fff;
+        border:3px solid #ff0050; border-radius:10px;
+        padding:10px 16px; font-size:0.8rem;
+        text-align:center; z-index:40;
+        box-shadow: 0 0 20px #ff0050;
+      `;
+      counter.innerHTML = `
+        <div style="color:#ff0050;font-size:1.1rem;font-weight:bold;">TikTok</div>
+        <div id="view-count" style="font-size:1.4rem;font-weight:bold;color:#69C9D0;">0 👀</div>
+        <div id="like-count" style="color:#ff0050;">♥ 0</div>
+        <div style="font-size:0.6rem;color:#aaa;margin-top:4px;">#Vincent #Aris #fyp</div>
+      `;
+      document.getElementById('scene').appendChild(counter);
+
+      // Zähler hochzählen
+      let views = 0, likes = 0;
+      const ticker = setInterval(() => {
+        views += Math.floor(Math.random() * 12000 + 3000);
+        likes  += Math.floor(Math.random() * 4000  + 1000);
+        document.getElementById('view-count').textContent =
+          (views >= 1000000 ? (views/1000000).toFixed(1) + 'M' : (views/1000).toFixed(0) + 'K') + ' 👀';
+        document.getElementById('like-count').textContent =
+          '♥ ' + (likes >= 1000 ? (likes/1000).toFixed(0) + 'K' : likes);
+
+        spawnStar(
+          Math.random() * 700 + 50,
+          Math.random() * 200 + 80,
+          ['❤️','🔥','😂','💀','😭'][Math.floor(Math.random()*5)]
+        );
+      }, 300);
+
+      at(5000, () => {
+        clearInterval(ticker);
+        document.getElementById('view-count').textContent = '4.7M 👀';
+        document.getElementById('like-count').textContent = '♥ 1.2M';
+        showBubble('vincent-bubble', 'Ich bin viral gegangen?! 😭🔥');
+        showBubble('juli-bubble', 'Du bist jetzt berühmt 💀');
+        setStatus('🎬 VIRAL! 4.7 Millionen Views!! Ende – Reset zum Wiederholen.');
+        btnReset.disabled = false;
+      });
+    });
   }
 
   /* ══════════════════════════════════════════
